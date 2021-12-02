@@ -2,6 +2,8 @@ package demo.benchmark;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.persistence.EntityManager;
+
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Measurement;
@@ -30,6 +32,8 @@ public class SpringDataJpaBenchmarking {
 	
 	private int id;
 
+	private EntityManager entityManager;
+
     @Setup
     public void setup() {
     	initEm();
@@ -45,10 +49,12 @@ public class SpringDataJpaBenchmarking {
 				new AnnotationConfigApplicationContext(
 				JpaConfig.class);
     	productRepository = context.getBean(ProductRepository.class);
+    	entityManager = context.getBean(EntityManager.class);
 	}
 
 	@Benchmark
     public Product springDataJpaQuery() {
+		entityManager.clear();
         return productRepository.findByName("phone");
     }
   
